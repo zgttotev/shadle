@@ -63,6 +63,7 @@ let targetHash   = '';
 let guesses      = [];   // { word, hash, distance, higher, exact }
 let gameWon      = false;
 let dayNumber    = 0;
+let allowedGuessHashes;
 
 // ── Persistence ──────────────────────────────────────────────────────────────
 
@@ -100,8 +101,8 @@ function formatUtcDate() {
 
 function shareRow(guess, index) {
   const heat = guess.exact ? 100 : 100 - guess.distance;
-  const filled = Math.max(0, Math.min(5, Math.round(heat / 20)));
-  const squares = '🟩'.repeat(filled) + '⬜'.repeat(5 - filled);
+  const filled = Math.max(0, Math.min(10, Math.round(heat / 10)));
+  const squares = '🟩'.repeat(filled) + '⬜'.repeat(10 - filled);
   if (guess.exact) return squares + ' 🎉';
   if (index === 0) return squares;
   const prev = guesses[index - 1];
@@ -190,6 +191,7 @@ async function handleGuess() {
   if (guesses.some(g => g.word === word)) { showError('Already guessed that word.'); return; }
 
   const hash     = await sha1hex(word);
+  if (!allowedGuessHashes.has(hash)) { showError('That word is not in the allowed list.'); return; }
   const exact    = hash === targetHash;
   const higher   = !exact && isHigher(hash, targetHash);
   const distance = exact ? 0 : distancePct(hash, targetHash);
@@ -207,6 +209,7 @@ async function handleGuess() {
 
 async function init() {
   dayNumber  = getDayNumber();
+  allowedGuessHashes = new Set(ALLOWED_GUESS_HASHES);
   targetHash = ANSWER_HASHES[dayNumber % ANSWER_HASHES.length];
 
   // Show day badge
