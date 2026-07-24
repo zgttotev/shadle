@@ -22,6 +22,7 @@ GitHub Actions*, then push.
    (0 % = exact match, 100 % = opposite extremes).
 5. A **daily stamp** (SHA-1 of the day number, first 8 hex chars) is shown in
    the header.
+6. The Share button copies a word-free, emoji heat map of the current guesses.
 
 ## Private source word list
 

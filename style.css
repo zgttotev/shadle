@@ -79,6 +79,13 @@ h1 {
   font-size: 0.75rem;
 }
 
+.target-hash {
+  color: var(--muted);
+  font-family: 'Courier New', monospace;
+  font-size: clamp(0.55rem, 2vw, 0.75rem);
+  overflow-wrap: anywhere;
+}
+
 .muted { color: var(--muted); }
 
 /* ── How to play ─────────────────────────────────────────────────────────── */
@@ -160,6 +167,49 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-primary:active { filter: brightness(0.9); }
 .btn-primary:disabled { filter: brightness(0.5); cursor: not-allowed; }
 
+.btn-secondary {
+  align-self: center;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-secondary:hover { border-color: var(--muted); }
+.share-msg { align-self: center; color: var(--muted); font-size: 0.8rem; min-height: 1.2em; }
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.keyboard button {
+  min-width: 2rem;
+  height: 2.75rem;
+  padding: 0 0.35rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--border);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.keyboard button:hover { filter: brightness(1.2); }
+.keyboard button:disabled { cursor: not-allowed; opacity: 0.45; }
+.keyboard .keyboard-wide { min-width: 3.8rem; font-size: 0.72rem; }
+
 .error-msg {
   color: #e74c3c;
   font-size: 0.85rem;
@@ -196,7 +246,7 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 .history-header,
 .guess-card {
   display: grid;
-  grid-template-columns: 1.5rem 5rem 1fr 6rem 10rem;
+  grid-template-columns: 1.5rem minmax(7rem, 1fr) 1fr 6rem 6rem 10rem;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.75rem;
@@ -236,7 +286,18 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
   letter-spacing: 0.12em;
 }
 
+.guess-word code {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.61rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
 .guess-dist { font-size: 0.82rem; color: var(--muted); }
+.guess-heat { color: var(--blue); font-size: 0.82rem; font-weight: 700; }
 
 /* ── Tags ────────────────────────────────────────────────────────────────── */
 .tag {
@@ -259,8 +320,10 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 @media (max-width: 480px) {
   .history-header,
   .guess-card {
-    grid-template-columns: 1.5rem 4.5rem 1fr 5rem 1fr;
+    grid-template-columns: 1.5rem minmax(5.5rem, 1fr) 1fr 4.5rem 4.5rem 1fr;
     font-size: 0.8rem;
   }
   .guess-word { font-size: 1rem; }
+  .keyboard button { min-width: 1.75rem; padding: 0 0.2rem; }
+  .keyboard .keyboard-wide { min-width: 3.2rem; }
 }

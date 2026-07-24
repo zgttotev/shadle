@@ -93,6 +93,33 @@ function showError(msg) {
   errorTimer = setTimeout(() => { el.textContent = ''; el.classList.remove('visible'); }, 2800);
 }
 
+function formatUtcDate() {
+  const [year, month, day] = new Date().toISOString().slice(0, 10).split('-');
+  return `${day}.${month}.${year}`;
+}
+
+function shareRow(guess) {
+  const heat = guess.exact ? 100 : 100 - guess.distance;
+  const filled = Math.max(0, Math.min(5, Math.round(heat / 20)));
+  const squares = '🟩'.repeat(filled) + '⬜'.repeat(5 - filled);
+  const direction = guess.exact ? ' 🎉' : (guess.higher ? ' ↘️' : ' ↗️');
+  return squares + direction;
+}
+
+async function shareGuesses() {
+  const lines = [
+    `#Shadle #${dayNumber + 1} (${formatUtcDate()}) ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}`,
+    ...guesses.map(shareRow),
+  ];
+
+  try {
+    await navigator.clipboard.writeText(lines.join('\n'));
+    document.getElementById('shareMsg').textContent = 'Copied to clipboard.';
+  } catch (_) {
+    showError('Could not copy guesses to the clipboard.');
+  }
+}
+
 function renderHistory() {
   const list    = document.getElementById('historyList');
   const section = document.getElementById('historySection');
@@ -135,9 +162,10 @@ function renderHistory() {
 
     card.innerHTML = `
       <span class="guess-num">${i + 1}</span>
-      <span class="guess-word">${g.word.toUpperCase()}</span>
+      <span class="guess-word">${g.word.toUpperCase()}<code>${g.hash}</code></span>
       ${dirText}
       <span class="guess-dist">${distText}</span>
+      <span class="guess-heat">${g.exact ? '100.0000' : (100 - g.distance).toFixed(4)} %</span>
       ${changeHtml}
     `;
 
@@ -152,6 +180,7 @@ function setWon() {
   banner.style.display = 'flex';
   document.getElementById('guessBtn').disabled   = true;
   document.getElementById('guessInput').disabled = true;
+  document.querySelectorAll('#keyboard button').forEach(button => { button.disabled = true; });
 }
 
 // ── Guess handler ────────────────────────────────────────────────────────────
@@ -192,6 +221,7 @@ async function init() {
   // proves the target was fixed before play began, without revealing it.
   const dayStamp = (await sha1hex(String(dayNumber))).slice(0, 8);
   document.getElementById('dayStamp').textContent = `stamp: ${dayStamp}`;
+  document.getElementById('targetHash').textContent = `Today’s SHA-1: ${targetHash}`;
 
   // Restore today's progress (if any)
   const saved = loadState();
@@ -206,6 +236,19 @@ async function init() {
   const input = document.getElementById('guessInput');
   input.addEventListener('keydown', e => { if (e.key === 'Enter') handleGuess(); });
   document.getElementById('guessBtn').addEventListener('click', handleGuess);
+  document.getElementById('shareBtn').addEventListener('click', shareGuesses);
+  document.getElementById('keyboard').addEventListener('click', e => {
+    const key = e.target.dataset.key;
+    if (!key || gameWon) return;
+    if (key === 'Enter') {
+      handleGuess();
+    } else if (key === 'Backspace') {
+      input.value = input.value.slice(0, -1);
+    } else if (input.value.length < input.maxLength) {
+      input.value += key;
+    }
+    input.focus();
+  });
   if (!gameWon) input.focus();
 }
 
