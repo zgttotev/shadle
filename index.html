@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadle</title>
+  <meta name="description" content="A daily word game where you find the secret word by comparing SHA-1 checksums.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <header>
+      <h1>Shadle</h1>
+      <p class="tagline">Find the secret word by its SHA-1 checksum</p>
+      <div class="day-meta">
+        <span class="badge" id="dayBadge">Day …</span>
+      </div>
+      <code class="target-hash" id="targetHash">Today’s SHA-1: …</code>
+    </header>
+
+    <!-- ── How to play ────────────────────────────────────────────────── -->
+    <details class="how-to-play">
+      <summary>How to play</summary>
+      <ul>
+        <li>Type any 5-letter word, use the keyboard below, then press <kbd>Enter</kbd> or <strong>Guess</strong>.</li>
+        <li>Each guess's SHA-1 checksum is compared to the secret word's checksum.</li>
+        <li><strong>Heat</strong> — your closeness percentile among all valid words (100 % = exact). Green is hot, yellow is warm, and red is cold.</li>
+        <li><strong>Points</strong> — earn 0–100 points from heat, plus a 100-point bonus for solving.</li>
+        <li><span class="change-cell closer">▲ hotter</span> / <span class="change-cell farther">▼ cooler</span> — heat change vs. your previous guess.</li>
+        <li>Guess the exact word to win! There is no guess limit.</li>
+      </ul>
+    </details>
+
+    <!-- ── Guess history ──────────────────────────────────────────────── -->
+    <section id="historySection" class="history-section" aria-live="polite">
+      <div class="history-header">
+        <span>#</span>
+        <span>Guess</span>
+        <span>Heat</span>
+        <span>Points</span>
+        <span>Change</span>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <!-- ── Win banner ─────────────────────────────────────────────────── -->
+    <div id="winBanner" class="win-banner" role="status" style="display:none">
+      <span class="win-emoji">🎉</span>
+      <p>You found today's checksum!</p>
+      <p>Solved in <strong id="winCount"></strong> guess<span id="winPlural"></span>!</p>
+    </div>
+
+    <!-- ── Input ──────────────────────────────────────────────────────── -->
+    <section class="input-section">
+      <div class="input-row">
+        <input
+          type="text"
+          id="guessInput"
+          maxlength="5"
+          placeholder="5-letter word"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+          aria-label="Enter your guess"
+        >
+        <button id="guessBtn" class="btn-primary">Guess</button>
+        <button id="shareBtn" class="btn-secondary">Share</button>
+      </div>
+      <p id="shareMsg" class="share-msg" role="status" aria-live="polite"></p>
+      <div id="keyboard" class="keyboard" aria-label="On-screen keyboard">
+        <div class="keyboard-row">
+          <button type="button" data-key="q">Q</button><button type="button" data-key="w">W</button><button type="button" data-key="e">E</button><button type="button" data-key="r">R</button><button type="button" data-key="t">T</button><button type="button" data-key="y">Y</button><button type="button" data-key="u">U</button><button type="button" data-key="i">I</button><button type="button" data-key="o">O</button><button type="button" data-key="p">P</button>
+        </div>
+        <div class="keyboard-row">
+          <button type="button" data-key="a">A</button><button type="button" data-key="s">S</button><button type="button" data-key="d">D</button><button type="button" data-key="f">F</button><button type="button" data-key="g">G</button><button type="button" data-key="h">H</button><button type="button" data-key="j">J</button><button type="button" data-key="k">K</button><button type="button" data-key="l">L</button>
+        </div>
+        <div class="keyboard-row">
+          <button type="button" class="keyboard-wide" data-key="Enter">Enter</button><button type="button" data-key="z">Z</button><button type="button" data-key="x">X</button><button type="button" data-key="c">C</button><button type="button" data-key="v">V</button><button type="button" data-key="b">B</button><button type="button" data-key="n">N</button><button type="button" data-key="m">M</button><button type="button" class="keyboard-wide" data-key="Backspace" aria-label="Backspace">⌫</button>
+        </div>
+      </div>
+      <p id="errorMsg" class="error-msg" role="alert" aria-live="assertive"></p>
+    </section>
+
+  </div><!-- /.container -->
+
+  <script src="words.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
