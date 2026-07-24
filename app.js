@@ -121,12 +121,8 @@ async function shareGuesses() {
 }
 
 function renderHistory() {
-  const list    = document.getElementById('historyList');
-  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
 
-  if (guesses.length === 0) { section.style.display = 'none'; return; }
-
-  section.style.display = 'block';
   list.innerHTML = '';
 
   guesses.forEach((g, i) => {
@@ -171,6 +167,9 @@ function renderHistory() {
 
     list.appendChild(card);
   });
+
+  // Scroll the most recent card into view
+  list.lastElementChild && list.lastElementChild.scrollIntoView({ block: 'nearest' });
 }
 
 function setWon() {
@@ -217,11 +216,8 @@ async function init() {
   // Show day badge
   document.getElementById('dayBadge').textContent = `Day ${dayNumber + 1}`;
 
-  // Show today's checksum (first 8 hex chars) as a daily stamp —
-  // proves the target was fixed before play began, without revealing it.
-  const dayStamp = (await sha1hex(String(dayNumber))).slice(0, 8);
-  document.getElementById('dayStamp').textContent = `stamp: ${dayStamp}`;
-  document.getElementById('targetHash').textContent = `Today’s SHA-1: ${targetHash}`;
+  // Show today's target hash
+  document.getElementById('targetHash').textContent = `Today's SHA-1: ${targetHash}`;
 
   // Restore today's progress (if any)
   const saved = loadState();

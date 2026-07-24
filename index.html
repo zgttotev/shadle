@@ -16,7 +16,6 @@
       <p class="tagline">Find the secret word by its SHA-1 checksum</p>
       <div class="day-meta">
         <span class="badge" id="dayBadge">Day …</span>
-        <span class="stamp muted" id="dayStamp" title="SHA-1 of today's day number — proves the secret was fixed before play began">stamp: …</span>
       </div>
       <code class="target-hash" id="targetHash">Today’s SHA-1: …</code>
     </header>
@@ -35,6 +34,26 @@
         <li>Guess the exact word to win! There is no guess limit.</li>
       </ul>
     </details>
+
+    <!-- ── Guess history ──────────────────────────────────────────────── -->
+    <section id="historySection" class="history-section" aria-live="polite">
+      <div class="history-header">
+        <span>#</span>
+        <span>Guess</span>
+        <span>Direction</span>
+        <span>Distance</span>
+        <span>Heat</span>
+        <span>Change</span>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <!-- ── Win banner ─────────────────────────────────────────────────── -->
+    <div id="winBanner" class="win-banner" role="status" style="display:none">
+      <span class="win-emoji">🎉</span>
+      <p>You found today's checksum!</p>
+      <p>Solved in <strong id="winCount"></strong> guess<span id="winPlural"></span>!</p>
+    </div>
 
     <!-- ── Input ──────────────────────────────────────────────────────── -->
     <section class="input-section">
@@ -63,30 +82,11 @@
           <button type="button" class="keyboard-wide" data-key="Enter">Enter</button><button type="button" data-key="z">Z</button><button type="button" data-key="x">X</button><button type="button" data-key="c">C</button><button type="button" data-key="v">V</button><button type="button" data-key="b">B</button><button type="button" data-key="n">N</button><button type="button" data-key="m">M</button><button type="button" class="keyboard-wide" data-key="Backspace" aria-label="Backspace">⌫</button>
         </div>
       </div>
-      <p id="errorMsg" class="error-msg" role="alert" aria-live="assertive"></p>
-    </section>
-
-    <button id="shareBtn" class="btn-secondary">Share guesses</button>
-    <p id="shareMsg" class="share-msg" role="status" aria-live="polite"></p>
-
-    <!-- ── Win banner ─────────────────────────────────────────────────── -->
-    <div id="winBanner" class="win-banner" role="status" style="display:none">
-      <span class="win-emoji">🎉</span>
-      <p>You found today’s checksum!</p>
-      <p>Solved in <strong id="winCount"></strong> guess<span id="winPlural"></span>!</p>
-    </div>
-
-    <!-- ── Guess history ──────────────────────────────────────────────── -->
-    <section id="historySection" class="history-section" style="display:none" aria-live="polite">
-      <div class="history-header">
-        <span>#</span>
-        <span>Guess</span>
-        <span>Direction</span>
-        <span>Distance</span>
-        <span>Heat</span>
-        <span>Change</span>
+      <div class="share-row">
+        <button id="shareBtn" class="btn-secondary">Share guesses</button>
+        <p id="shareMsg" class="share-msg" role="status" aria-live="polite"></p>
       </div>
-      <div id="historyList" class="history-list"></div>
+      <p id="errorMsg" class="error-msg" role="alert" aria-live="assertive"></p>
     </section>
 
   </div><!-- /.container -->
