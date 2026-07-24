@@ -98,18 +98,22 @@ function formatUtcDate() {
   return `${day}.${month}.${year}`;
 }
 
-function shareRow(guess) {
+function shareRow(guess, index) {
   const heat = guess.exact ? 100 : 100 - guess.distance;
   const filled = Math.max(0, Math.min(5, Math.round(heat / 20)));
   const squares = '🟩'.repeat(filled) + '⬜'.repeat(5 - filled);
-  const direction = guess.exact ? ' 🎉' : (guess.higher ? ' ↘️' : ' ↗️');
-  return squares + direction;
+  if (guess.exact) return squares + ' 🎉';
+  if (index === 0) return squares;
+  const prev = guesses[index - 1];
+  const delta = prev.distance - guess.distance;
+  if (Math.abs(delta) < 0.0001) return squares;
+  return squares + (delta > 0 ? ' ⬆️' : ' ⬇️');
 }
 
 async function shareGuesses() {
   const lines = [
     `#Shadle #${dayNumber + 1} (${formatUtcDate()}) ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}`,
-    ...guesses.map(shareRow),
+    ...guesses.map((g, i) => shareRow(g, i)),
   ];
 
   try {
@@ -133,13 +137,6 @@ function renderHistory() {
     classes += g.exact ? ' win' : (g.higher ? ' higher' : ' lower');
     card.className = classes;
 
-    // Direction cell
-    const dirText = g.exact
-      ? '<span class="tag win-tag">🎯 Exact!</span>'
-      : g.higher
-        ? '<span class="tag higher-tag">↑ Higher</span>'
-        : '<span class="tag lower-tag">↓ Lower</span>';
-
     // Distance cell
     const distText = g.exact ? '—' : `${g.distance.toFixed(4)} %`;
 
@@ -158,8 +155,7 @@ function renderHistory() {
 
     card.innerHTML = `
       <span class="guess-num">${i + 1}</span>
-      <span class="guess-word">${g.word.toUpperCase()}<code>${g.hash}</code></span>
-      ${dirText}
+      <span class="guess-word">${g.word.toUpperCase()}<code>${g.hash.slice(0, 20)}<br>${g.hash.slice(20)}</code></span>
       <span class="guess-dist">${distText}</span>
       <span class="guess-heat">${g.exact ? '100.0000' : (100 - g.distance).toFixed(4)} %</span>
       ${changeHtml}

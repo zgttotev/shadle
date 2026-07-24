@@ -179,26 +179,19 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-primary:disabled { filter: brightness(0.5); cursor: not-allowed; }
 
 .btn-secondary {
-  align-self: center;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
   cursor: pointer;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .btn-secondary:hover { border-color: var(--muted); }
 
-.share-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.2rem;
-}
-
-.share-msg { color: var(--muted); font-size: 0.8rem; }
+.share-msg { color: var(--muted); font-size: 0.8rem; min-height: 1.2em; }
 
 .keyboard {
   display: flex;
@@ -285,7 +278,7 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 .history-header,
 .guess-card {
   display: grid;
-  grid-template-columns: 1.5rem minmax(7rem, 1fr) 1fr 6rem 6rem 10rem;
+  grid-template-columns: 1.5rem minmax(8rem, 1fr) 6rem 6rem 10rem;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.75rem;
@@ -359,7 +352,7 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 @media (max-width: 480px) {
   .history-header,
   .guess-card {
-    grid-template-columns: 1.5rem minmax(5.5rem, 1fr) 1fr 4.5rem 4.5rem 1fr;
+    grid-template-columns: 1.5rem minmax(5.5rem, 1fr) 4.5rem 4.5rem 1fr;
     font-size: 0.8rem;
   }
   .guess-word { font-size: 1rem; }

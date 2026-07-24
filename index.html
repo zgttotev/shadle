@@ -26,8 +26,6 @@
       <ul>
         <li>Type any 5-letter word, use the keyboard below, then press <kbd>Enter</kbd> or <strong>Guess</strong>.</li>
         <li>Each guess's SHA-1 checksum is compared to the secret word's checksum.</li>
-        <li><span class="tag higher-tag">↑ Higher</span> — your checksum is numerically greater than the target.</li>
-        <li><span class="tag lower-tag">↓ Lower</span> — your checksum is numerically less than the target.</li>
         <li><strong>Distance</strong> — how far apart the checksums are (0 % = exact, 100 % = opposite ends).</li>
         <li><strong>Heat</strong> — inverse distance; more green share squares means a closer checksum.</li>
         <li><span class="change-cell closer">▲ closer</span> / <span class="change-cell farther">▼ farther</span> — change vs. your previous guess.</li>
@@ -40,7 +38,6 @@
       <div class="history-header">
         <span>#</span>
         <span>Guess</span>
-        <span>Direction</span>
         <span>Distance</span>
         <span>Heat</span>
         <span>Change</span>
@@ -70,7 +67,9 @@
           aria-label="Enter your guess"
         >
         <button id="guessBtn" class="btn-primary">Guess</button>
+        <button id="shareBtn" class="btn-secondary">Share</button>
       </div>
+      <p id="shareMsg" class="share-msg" role="status" aria-live="polite"></p>
       <div id="keyboard" class="keyboard" aria-label="On-screen keyboard">
         <div class="keyboard-row">
           <button type="button" data-key="q">Q</button><button type="button" data-key="w">W</button><button type="button" data-key="e">E</button><button type="button" data-key="r">R</button><button type="button" data-key="t">T</button><button type="button" data-key="y">Y</button><button type="button" data-key="u">U</button><button type="button" data-key="i">I</button><button type="button" data-key="o">O</button><button type="button" data-key="p">P</button>
@@ -81,10 +80,6 @@
         <div class="keyboard-row">
           <button type="button" class="keyboard-wide" data-key="Enter">Enter</button><button type="button" data-key="z">Z</button><button type="button" data-key="x">X</button><button type="button" data-key="c">C</button><button type="button" data-key="v">V</button><button type="button" data-key="b">B</button><button type="button" data-key="n">N</button><button type="button" data-key="m">M</button><button type="button" class="keyboard-wide" data-key="Backspace" aria-label="Backspace">⌫</button>
         </div>
-      </div>
-      <div class="share-row">
-        <button id="shareBtn" class="btn-secondary">Share guesses</button>
-        <p id="shareMsg" class="share-msg" role="status" aria-live="polite"></p>
       </div>
       <p id="errorMsg" class="error-msg" role="alert" aria-live="assertive"></p>
     </section>
