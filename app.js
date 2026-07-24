@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * app.js — Shadle game engine
+ * app.js — SHAdle game engine
  *
  * Each day a secret 5-letter word's SHA-1 checksum is selected from the
  * ordered ANSWER_HASHES list.
@@ -186,7 +186,7 @@ function shareRow(guess, index) {
 
 async function shareGuesses() {
   const lines = [
-    `#Shadle #${dayNumber + 1} (${formatUtcDate()}) ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}`,
+    `#SHAdle #${dayNumber + 1} (${formatUtcDate()}) ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}`,
     ...guesses.map((g, i) => shareRow(g, i)),
     `Score: ${totalPoints()} points`,
     GAME_URL,

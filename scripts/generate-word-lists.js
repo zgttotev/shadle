@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * Generates the browser-safe word lists used by Shadle.
+ * Generates the browser-safe word lists used by SHAdle.
  *
  * Input files and the plaintext daily schedule stay local and are ignored by
  * Git. The generated browser file contains SHA-1 digests only: answer digests

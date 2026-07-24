@@ -1,4 +1,4 @@
-# Shadle
+# SHAdle
 
 A daily word-guessing game where you find the secret 5-letter word by
 comparing **SHA-1 checksums** — no letter hints, just higher/lower distances.
