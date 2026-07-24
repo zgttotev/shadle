@@ -3,7 +3,8 @@
 /**
  * app.js — Shadle game engine
  *
- * Each day a secret 5-letter word is selected from the shuffled ANSWERS list.
+ * Each day a secret 5-letter word's SHA-1 checksum is selected from the
+ * ordered ANSWER_HASHES list.
  * Players guess 5-letter words; the app computes each word's SHA-1 checksum
  * (via the Web Crypto API), treats it as a 160-bit integer, and reports:
  *   • whether the guess's checksum is numerically Higher or Lower than the target
@@ -12,13 +13,6 @@
  *
  * Progress is persisted in localStorage and rehydrated on page load.
  *
- * Optional gist override
- * ──────────────────────
- * Set window.SHADLE_GIST_URL to a raw GitHub gist URL that returns a JSON
- * array of 5-letter words.  The app will fetch that list on startup and use
- * it as ANSWERS instead of the embedded one.  Example (in a <script> before
- * this file):
- *   window.SHADLE_GIST_URL = 'https://gist.githubusercontent.com/…/raw/…';
  */
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -65,7 +59,6 @@ function isHigher(guessHex, targetHex) { return hexToBig(guessHex) > hexToBig(ta
 
 // ── State ────────────────────────────────────────────────────────────────────
 
-let targetWord   = '';
 let targetHash   = '';
 let guesses      = [];   // { word, hash, distance, higher, exact }
 let gameWon      = false;
@@ -154,7 +147,6 @@ function renderHistory() {
 
 function setWon() {
   const banner = document.getElementById('winBanner');
-  document.getElementById('winWord').textContent    = targetWord.toUpperCase();
   document.getElementById('winCount').textContent   = guesses.length;
   document.getElementById('winPlural').textContent  = guesses.length === 1 ? '' : 'es';
   banner.style.display = 'flex';
@@ -170,8 +162,7 @@ async function handleGuess() {
   const input = document.getElementById('guessInput');
   const word  = input.value.trim().toLowerCase();
 
-  if (word.length !== 5) { showError('Word must be 5 letters.'); return; }
-  if (!VALID_WORDS.has(word)) { showError('Not in word list.'); return; }
+  if (!/^[a-z]{5}$/.test(word)) { showError('Word must be 5 letters.'); return; }
   if (guesses.some(g => g.word === word)) { showError('Already guessed that word.'); return; }
 
   const hash     = await sha1hex(word);
@@ -188,32 +179,11 @@ async function handleGuess() {
   if (gameWon) setWon();
 }
 
-// ── Optional gist override ───────────────────────────────────────────────────
-
-async function maybeLoadGist() {
-  const url = (typeof window.SHADLE_GIST_URL === 'string') ? window.SHADLE_GIST_URL.trim() : '';
-  if (!url) return;
-  try {
-    const res  = await fetch(url);
-    if (!res.ok) return;
-    const list = await res.json();
-    if (Array.isArray(list) && list.length > 0 && list.every(w => typeof w === 'string' && w.length === 5)) {
-      window.ANSWERS     = list;
-      window.VALID_WORDS = new Set(list);
-    }
-  } catch (_) {
-    // Silently fall back to embedded list
-  }
-}
-
 // ── Initialise ───────────────────────────────────────────────────────────────
 
 async function init() {
-  await maybeLoadGist();
-
   dayNumber  = getDayNumber();
-  targetWord = ANSWERS[dayNumber % ANSWERS.length];
-  targetHash = await sha1hex(targetWord);
+  targetHash = ANSWER_HASHES[dayNumber % ANSWER_HASHES.length];
 
   // Show day badge
   document.getElementById('dayBadge').textContent = `Day ${dayNumber + 1}`;

@@ -56,8 +56,8 @@
     <!-- ── Win banner ─────────────────────────────────────────────────── -->
     <div id="winBanner" class="win-banner" role="status" style="display:none">
       <span class="win-emoji">🎉</span>
-      <p>The word was <strong id="winWord"></strong></p>
-      <p>Found in <strong id="winCount"></strong> guess<span id="winPlural"></span>!</p>
+      <p>You found today’s checksum!</p>
+      <p>Solved in <strong id="winCount"></strong> guess<span id="winPlural"></span>!</p>
     </div>
 
     <!-- ── Guess history ──────────────────────────────────────────────── -->
@@ -75,12 +75,6 @@
   </div><!-- /.container -->
 
   <script src="words.js"></script>
-  <!--
-    Optional: set window.SHADLE_GIST_URL to a raw gist URL containing a JSON
-    array of 5-letter words.  That list will override the embedded ANSWERS.
-    Example:
-      <script>window.SHADLE_GIST_URL = 'https://gist.githubusercontent.com/…/raw/…';</script>
-  -->
   <script src="app.js"></script>
 </body>
 </html>
