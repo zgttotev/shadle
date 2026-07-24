@@ -278,7 +278,7 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 .history-header,
 .guess-card {
   display: grid;
-  grid-template-columns: 1.5rem minmax(8rem, 1fr) 6rem 6rem 10rem;
+  grid-template-columns: 1.5rem minmax(8rem, 1fr) 6rem 5rem 10rem;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.75rem;
@@ -328,8 +328,11 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
   overflow-wrap: anywhere;
 }
 
-.guess-dist { font-size: 0.82rem; color: var(--muted); }
-.guess-heat { color: var(--blue); font-size: 0.82rem; font-weight: 700; }
+.guess-heat { font-size: 0.82rem; font-weight: 700; }
+.heat-hot { color: var(--accent); }
+.heat-warm { color: var(--gold); }
+.heat-cold { color: var(--red); }
+.guess-points { color: var(--gold); font-size: 0.82rem; font-weight: 700; }
 
 /* ── Tags ────────────────────────────────────────────────────────────────── */
 .tag {
@@ -352,7 +355,7 @@ input[type="text"]:disabled { opacity: 0.4; cursor: not-allowed; }
 @media (max-width: 480px) {
   .history-header,
   .guess-card {
-    grid-template-columns: 1.5rem minmax(5.5rem, 1fr) 4.5rem 4.5rem 1fr;
+    grid-template-columns: 1.25rem minmax(4.25rem, 1fr) 3.5rem 3.25rem 1fr;
     font-size: 0.8rem;
   }
   .guess-word { font-size: 1rem; }

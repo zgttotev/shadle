@@ -21,6 +21,7 @@
 const START_DATE = new Date('2024-01-01T00:00:00Z');
 const STORAGE_KEY = 'shadle-state';
 const MAX_SHA1 = (1n << 160n) - 1n;   // 2^160 − 1
+const GAME_URL = 'https://zgttotev.github.io/shadle/';
 
 // ── Date helpers ─────────────────────────────────────────────────────────────
 
@@ -64,6 +65,7 @@ let guesses      = [];   // { word, hash, distance, higher, exact }
 let gameWon      = false;
 let dayNumber    = 0;
 let allowedGuessHashes;
+let sortedAllowedGuessHashes;
 
 // ── Persistence ──────────────────────────────────────────────────────────────
 
@@ -99,22 +101,95 @@ function formatUtcDate() {
   return `${day}.${month}.${year}`;
 }
 
+/** First index containing a hash that is not less than value. */
+function lowerBound(hashes, value) {
+  let low = 0;
+  let high = hashes.length;
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (hashes[middle] < value) low = middle + 1;
+    else high = middle;
+  }
+  return low;
+}
+
+/** First index containing a hash greater than value. */
+function upperBound(hashes, value) {
+  let low = 0;
+  let high = hashes.length;
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (hashes[middle] <= value) low = middle + 1;
+    else high = middle;
+  }
+  return low;
+}
+
+/** Convert a 160-bit integer to its fixed-width SHA-1 hex representation. */
+function bigToHex(value) { return value.toString(16).padStart(40, '0'); }
+
+/**
+ * Heat is a closeness percentile among every valid guess. A random valid word
+ * averages about 50 % heat regardless of whether the target hash is near an
+ * end of the SHA-1 range; the exact answer is always 100 %.
+ */
+function heatForHash(hash) {
+  const guess = hexToBig(hash);
+  const target = hexToBig(targetHash);
+  const distance = guess > target ? guess - target : target - guess;
+  const low = bigToHex(target > distance ? target - distance : 0n);
+  const high = bigToHex(target + distance < MAX_SHA1 ? target + distance : MAX_SHA1);
+  const atLeastAsClose = upperBound(sortedAllowedGuessHashes, high)
+    - lowerBound(sortedAllowedGuessHashes, low);
+  return 100 * (sortedAllowedGuessHashes.length - atLeastAsClose)
+    / (sortedAllowedGuessHashes.length - 1);
+}
+
+function heatForGuess(guess) {
+  return guess.heat ?? heatForHash(guess.hash);
+}
+
+/** Awards 0–100 points for heat, plus a 100-point solve bonus. */
+function pointsForGuess(guess) {
+  const heat = heatForGuess(guess);
+  return Math.max(0, Math.round(heat)) + (guess.exact ? 100 : 0);
+}
+
+function totalPoints() {
+  return guesses.reduce((total, guess) => total + pointsForGuess(guess), 0);
+}
+
+function heatClass(heat) {
+  if (heat >= 70) return 'heat-hot';
+  if (heat >= 35) return 'heat-warm';
+  return 'heat-cold';
+}
+
+function heatSquare(heat) {
+  if (heat >= 70) return '🟩';
+  if (heat >= 35) return '🟨';
+  return '🟥';
+}
+
 function shareRow(guess, index) {
-  const heat = guess.exact ? 100 : 100 - guess.distance;
+  const heat = heatForGuess(guess);
   const filled = Math.max(0, Math.min(10, Math.round(heat / 10)));
-  const squares = '🟩'.repeat(filled) + '⬜'.repeat(10 - filled);
-  if (guess.exact) return squares + ' 🎉';
-  if (index === 0) return squares;
+  const squares = heatSquare(heat).repeat(filled) + '⬜'.repeat(10 - filled);
+  const points = pointsForGuess(guess);
+  if (guess.exact) return `${squares} 🎉 +${points}`;
+  if (index === 0) return `${squares} +${points}`;
   const prev = guesses[index - 1];
-  const delta = prev.distance - guess.distance;
-  if (Math.abs(delta) < 0.0001) return squares;
-  return squares + (delta > 0 ? ' ⬆️' : ' ⬇️');
+  const delta = heatForGuess(guess) - heatForGuess(prev);
+  if (Math.abs(delta) < 0.0001) return `${squares} +${points}`;
+  return `${squares}${delta > 0 ? ' ⬆️' : ' ⬇️'} +${points}`;
 }
 
 async function shareGuesses() {
   const lines = [
     `#Shadle #${dayNumber + 1} (${formatUtcDate()}) ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}`,
     ...guesses.map((g, i) => shareRow(g, i)),
+    `Score: ${totalPoints()} points`,
+    GAME_URL,
   ];
 
   try {
@@ -138,27 +213,25 @@ function renderHistory() {
     classes += g.exact ? ' win' : (g.higher ? ' higher' : ' lower');
     card.className = classes;
 
-    // Distance cell
-    const distText = g.exact ? '—' : `${g.distance.toFixed(4)} %`;
-
     // Change cell
     let changeHtml = '<span class="change-cell muted">—</span>';
     if (i > 0 && !g.exact) {
-      const delta = prev.distance - g.distance;
+      const delta = heatForGuess(g) - heatForGuess(prev);
       if (Math.abs(delta) < 0.0001) {
         changeHtml = '<span class="change-cell muted">no change</span>';
       } else if (delta > 0) {
-        changeHtml = `<span class="change-cell closer">▲ ${delta.toFixed(4)} % closer</span>`;
+        changeHtml = `<span class="change-cell closer">▲ ${delta.toFixed(4)} % hotter</span>`;
       } else {
-        changeHtml = `<span class="change-cell farther">▼ ${Math.abs(delta).toFixed(4)} % farther</span>`;
+        changeHtml = `<span class="change-cell farther">▼ ${Math.abs(delta).toFixed(4)} % cooler</span>`;
       }
     }
 
+    const heat = heatForGuess(g);
     card.innerHTML = `
       <span class="guess-num">${i + 1}</span>
       <span class="guess-word">${g.word.toUpperCase()}<code>${g.hash.slice(0, 20)}<br>${g.hash.slice(20)}</code></span>
-      <span class="guess-dist">${distText}</span>
-      <span class="guess-heat">${g.exact ? '100.0000' : (100 - g.distance).toFixed(4)} %</span>
+      <span class="guess-heat ${heatClass(heat)}">${heat.toFixed(4)} %</span>
+      <span class="guess-points">+${pointsForGuess(g)}</span>
       ${changeHtml}
     `;
 
@@ -195,8 +268,9 @@ async function handleGuess() {
   const exact    = hash === targetHash;
   const higher   = !exact && isHigher(hash, targetHash);
   const distance = exact ? 0 : distancePct(hash, targetHash);
+  const heat     = heatForHash(hash);
 
-  guesses.push({ word, hash, exact, higher, distance });
+  guesses.push({ word, hash, exact, higher, distance, heat });
   gameWon = exact;
   input.value = '';
 
@@ -210,6 +284,7 @@ async function handleGuess() {
 async function init() {
   dayNumber  = getDayNumber();
   allowedGuessHashes = new Set(ALLOWED_GUESS_HASHES);
+  sortedAllowedGuessHashes = [...ALLOWED_GUESS_HASHES].sort();
   targetHash = ANSWER_HASHES[dayNumber % ANSWER_HASHES.length];
 
   // Show day badge

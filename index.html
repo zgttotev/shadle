@@ -26,9 +26,9 @@
       <ul>
         <li>Type any 5-letter word, use the keyboard below, then press <kbd>Enter</kbd> or <strong>Guess</strong>.</li>
         <li>Each guess's SHA-1 checksum is compared to the secret word's checksum.</li>
-        <li><strong>Distance</strong> — how far apart the checksums are (0 % = exact, 100 % = opposite ends).</li>
-        <li><strong>Heat</strong> — inverse distance; more green share squares means a closer checksum.</li>
-        <li><span class="change-cell closer">▲ closer</span> / <span class="change-cell farther">▼ farther</span> — change vs. your previous guess.</li>
+        <li><strong>Heat</strong> — your closeness percentile among all valid words (100 % = exact). Green is hot, yellow is warm, and red is cold.</li>
+        <li><strong>Points</strong> — earn 0–100 points from heat, plus a 100-point bonus for solving.</li>
+        <li><span class="change-cell closer">▲ hotter</span> / <span class="change-cell farther">▼ cooler</span> — heat change vs. your previous guess.</li>
         <li>Guess the exact word to win! There is no guess limit.</li>
       </ul>
     </details>
@@ -38,8 +38,8 @@
       <div class="history-header">
         <span>#</span>
         <span>Guess</span>
-        <span>Distance</span>
         <span>Heat</span>
+        <span>Points</span>
         <span>Change</span>
       </div>
       <div id="historyList" class="history-list"></div>
