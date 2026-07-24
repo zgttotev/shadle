@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadle</title>
+  <meta name="description" content="A daily word game where you find the secret word by comparing SHA-1 checksums.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <header>
+      <h1>Shadle</h1>
+      <p class="tagline">Find the secret word by its SHA-1 checksum</p>
+      <div class="day-meta">
+        <span class="badge" id="dayBadge">Day …</span>
+        <span class="stamp muted" id="dayStamp" title="SHA-1 of today's day number — proves the secret was fixed before play began">stamp: …</span>
+      </div>
+    </header>
+
+    <!-- ── How to play ────────────────────────────────────────────────── -->
+    <details class="how-to-play">
+      <summary>How to play</summary>
+      <ul>
+        <li>Type any 5-letter word and press <kbd>Enter</kbd> or <strong>Guess</strong>.</li>
+        <li>Each guess's SHA-1 checksum is compared to the secret word's checksum.</li>
+        <li><span class="tag higher-tag">↑ Higher</span> — your checksum is numerically greater than the target.</li>
+        <li><span class="tag lower-tag">↓ Lower</span> — your checksum is numerically less than the target.</li>
+        <li><strong>Distance</strong> — how far apart the checksums are (0 % = exact, 100 % = opposite ends).</li>
+        <li><span class="change-cell closer">▲ closer</span> / <span class="change-cell farther">▼ farther</span> — change vs. your previous guess.</li>
+        <li>Guess the exact word to win! There is no guess limit.</li>
+      </ul>
+    </details>
+
+    <!-- ── Input ──────────────────────────────────────────────────────── -->
+    <section class="input-section">
+      <div class="input-row">
+        <input
+          type="text"
+          id="guessInput"
+          maxlength="5"
+          placeholder="5-letter word"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+          aria-label="Enter your guess"
+        >
+        <button id="guessBtn" class="btn-primary">Guess</button>
+      </div>
+      <p id="errorMsg" class="error-msg" role="alert" aria-live="assertive"></p>
+    </section>
+
+    <!-- ── Win banner ─────────────────────────────────────────────────── -->
+    <div id="winBanner" class="win-banner" role="status" style="display:none">
+      <span class="win-emoji">🎉</span>
+      <p>The word was <strong id="winWord"></strong></p>
+      <p>Found in <strong id="winCount"></strong> guess<span id="winPlural"></span>!</p>
+    </div>
+
+    <!-- ── Guess history ──────────────────────────────────────────────── -->
+    <section id="historySection" class="history-section" style="display:none" aria-live="polite">
+      <div class="history-header">
+        <span>#</span>
+        <span>Word</span>
+        <span>Direction</span>
+        <span>Distance</span>
+        <span>Change</span>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+  </div><!-- /.container -->
+
+  <script src="words.js"></script>
+  <!--
+    Optional: set window.SHADLE_GIST_URL to a raw gist URL containing a JSON
+    array of 5-letter words.  That list will override the embedded ANSWERS.
+    Example:
+      <script>window.SHADLE_GIST_URL = 'https://gist.githubusercontent.com/…/raw/…';</script>
+  -->
+  <script src="app.js"></script>
+</body>
+</html>
