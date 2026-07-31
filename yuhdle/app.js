@@ -38,8 +38,10 @@ function submitGuess() {
 }
 
 async function copyShare() {
+  if (!won) return;
   try {
-    await navigator.clipboard.writeText(`yuh\n${window.location.href}`);
+    const date = new Date().toISOString().slice(0, 10);
+    await navigator.clipboard.writeText(`#yuhdle ${date} | 1/1\nyuh\n${window.location.href}`);
     share.classList.add('copied');
     message.textContent = 'yuh';
     window.setTimeout(() => share.classList.remove('copied'), 1200);
