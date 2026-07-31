@@ -1,0 +1,86 @@
+:root {
+  color-scheme: dark;
+  --bg: #121213;
+  --tile: #121213;
+  --border: #3a3a3c;
+  --key: #818384;
+  --good: #538d4e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: white;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.game { width: min(92vw, 360px); text-align: center; }
+
+h1 {
+  margin: 0 0 2rem;
+  font-size: 2rem;
+  letter-spacing: .12em;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.tile {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--border);
+  font-size: clamp(2rem, 12vw, 3.4rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tile.filled { border-color: #565758; }
+.tile.correct { background: var(--good); border-color: var(--good); }
+
+.message { min-height: 1.5rem; margin: 1.5rem 0; font-weight: 700; }
+
+.keyboard { display: grid; gap: 7px; }
+
+.keyboard-row { display: grid; grid-template-columns: repeat(10, 1fr); gap: 7px; }
+
+/* Their native positions on a QWERTY keyboard; every other key is absent. */
+.keyboard-top button:first-child { grid-column: 6; }
+.keyboard-home { grid-template-columns: repeat(9, 1fr); padding: 0 5%; }
+.keyboard-home button { grid-column: 6; }
+
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 7px; }
+
+.action { min-height: 48px; text-transform: lowercase; }
+
+.action svg {
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: .3em;
+  fill: currentColor;
+  vertical-align: -.15em;
+}
+
+button {
+  min-height: 62px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--key);
+  color: white;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button:active { transform: scale(.96); }
+button.correct { background: var(--good); }
+button.copied { background: var(--good); }
